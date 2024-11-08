@@ -1,0 +1,280 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package laptrinhcsdl;
+import java.sql.*;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+/**
+ *
+ * @author Admin
+ */
+
+public class frmHienThi extends javax.swing.JFrame {
+ArrayList<nhanvien> dsnv = new ArrayList<nhanvien>();
+ArrayList<donvi> dsdv = new ArrayList<donvi>();
+
+void NapBang(ArrayList<nhanvien> ds) {
+                int stt = 1;
+		DefaultTableModel mh = new DefaultTableModel();
+		String[] td = {"stt" , "hoten" , "gioitinh" , "ngaysinh",
+                "hsl", "madv"};
+		mh.setColumnIdentifiers(td);
+		for (nhanvien nv : ds) {
+			Object[] t = new Object[7];
+                    t[0] = stt;
+                    stt++;
+                    t[1] = nv.getManv();
+                    t[2] = nv.getHoten();
+                    t[3] = nv.isGioitinh();
+                    t[4] = nv.getNgaysinh();
+                    t[5] = nv.getHsl();
+                    t[6] = nv.getMadv();
+                    mh.addRow(t);
+		}
+		tblnv.setModel(mh);
+	}
+
+    public class Tuyendv extends Thread{
+        public void run(){            
+                try {
+                //b1: Tạo câu lệnh sql
+                String sql = "select * from donvi";
+                //b2: Tạo câu lệnh
+                PreparedStatement cmd = KetNoi.cn.prepareStatement(sql);
+                //b3: Thực hiện câu lệnh
+                ResultSet rs = cmd.executeQuery();
+                //b4: Duyệt qua rs
+                DefaultListModel<donvi> mhl = new DefaultListModel<donvi>();
+                while(rs.next()){
+                    String madv = rs.getString("madv");
+                    String tendv = rs.getString("tendv");
+                    
+                    donvi dv = new donvi(madv, tendv);
+                    mhl.addElement(dv);
+                    dsdv.add(dv);
+                }
+                rs.close();
+                lstdv.setModel(mhl);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    
+    public class Tuyennv extends Thread{
+        public void run(){
+            try {
+                //b1: Tạo câu lệnh sql
+                String sql = "select * from nhanvien";
+                //b2: Tạo câu lệnh
+                PreparedStatement cmd = KetNoi.cn.prepareStatement(sql);
+                //b3: Thực hiện câu lệnh
+                ResultSet rs = cmd.executeQuery();
+                //b4: Duyệt qua rs
+                DefaultTableModel mhb = new DefaultTableModel();
+                mhb.addColumn("stt");
+                mhb.addColumn("manv");
+                mhb.addColumn("hoten");
+                mhb.addColumn("gioitinh");
+                mhb.addColumn("ngaysinh");
+                mhb.addColumn("hsl");
+                mhb.addColumn("madv");
+                int stt = 1;
+                while(rs.next()){
+                    String manv = rs.getString("manv");
+                    String hoten = rs.getString("hoten");
+                    boolean gioitinh = rs.getBoolean("gioitinh");
+                    Date ngaysinh = rs.getDate("ngaysinh");
+                    float hsl = rs.getFloat("hsl");
+                    String madv = rs.getString("madv");
+                    
+                    nhanvien nv = new nhanvien(manv, hoten, gioitinh, ngaysinh, hsl, madv);
+
+                    
+                    Object[] t = new Object[7];
+                    t[0] = stt;
+                    stt++;
+                    t[1] = nv.getManv();
+                    t[2] = nv.getHoten();
+                    t[3] = nv.isGioitinh();
+                    t[4] = nv.getNgaysinh();
+                    t[5] = nv.getHsl();
+                    t[6] = nv.getMadv();
+                    mhb.addRow(t);
+                    dsnv.add(nv);
+                }
+                    rs.close();
+                    tblnv.setModel(mhb); 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    
+    public class TuyenHT extends Thread{
+        public void run(){
+            ArrayList<nhanvien> tam = new ArrayList<nhanvien>();
+            donvi dv = (donvi) lstdv.getSelectedValue();
+            System.out.println(dv.getMadv());
+            for(nhanvien nv : dsnv){
+                if(nv.getMadv().equals(dv.getMadv())){
+                    tam.add(nv);
+                }
+            }
+            NapBang(tam);
+        }
+    }
+    
+    /**
+     * Creates new form frmHienThi
+     */
+    public frmHienThi() {
+        initComponents();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        lstdv = new javax.swing.JList();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblnv = new javax.swing.JTable();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
+
+        lstdv.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lstdvMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(lstdv);
+
+        tblnv.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(tblnv);
+
+        jTabbedPane1.addTab("tab1", jScrollPane2);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(34, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(207, 207, 207)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(54, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addGap(250, 250, 250))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+//        mhb.addColumn("STT");
+//        mhb.addColumn("Ho ten");
+        try {
+            KetNoi kn = new KetNoi();
+            kn.KetNoi();
+            Tuyendv tuyendv = new Tuyendv();
+            tuyendv.start();
+            
+            Tuyennv tuyennv = new Tuyennv();
+            tuyennv.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_formWindowOpened
+    
+    
+    
+    private void lstdvMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstdvMouseClicked
+        // TODO add your handling code here:   
+        
+        TuyenHT tuyenht = new TuyenHT();
+        tuyenht.start();
+        
+    }//GEN-LAST:event_lstdvMouseClicked
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(frmHienThi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(frmHienThi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(frmHienThi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(frmHienThi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new frmHienThi().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JList lstdv;
+    private javax.swing.JTable tblnv;
+    // End of variables declaration//GEN-END:variables
+}
